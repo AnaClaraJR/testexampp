@@ -1,38 +1,108 @@
-# Plano de Testes - Sistema Web (Qualidade e Teste de Software)
+# Plano de Testes - Acervo Rondoniense
 
-| ID | Funcionalidade | Tipo | Objetivo | Dados de Entrada | Resultado Esperado | Prioridade | Status |
-|-----|----------------|------|----------|------------------|--------------------|-----------:|--------|
-| CT01 | Login | Funcional / E2E | Verificar login válido | email e senha válidos | Acesso ao sistema (Dashboard) | Alta | Pendente |
-| CT02 | Login | Negativo | Verificar mensagem para senha incorreta | email válido + senha incorreta | Mensagem de erro e permanece na tela de login | Alta | Pendente |
-| CT03 | Sugestão - Validação | Validação | Campos obrigatórios vazios | formulário vazio | Bloqueio do envio e mensagem de campos obrigatórios | Média | Pendente |
-| CT04 | Sugestão - Fluxo completo | Funcional / E2E | Enviar sugestão completa | nome, cidade, descrição, foto válidos | Mensagem de sucesso e registro enviado | Alta | Pendente |
-| CT05 | Acesso administrativo | Segurança | Acesso sem autenticação à área admin | abrir rota /admin/solicitacoes sem login | Redireciona/avisa que é necessário login | Alta | Pendente |
-| CT06 | Acesso administrativo (perfil insuficiente) | Segurança | Usuário comum tenta acessar área admin | login usuário comum + acessar rota admin | Mensagem de acesso restrito | Alta | Pendente |
-| CT07 | XSS (injeção de script) | Segurança | Validar que campos de texto não executam scripts | inserir `<script>alert(1)</script>` em campo texto | Não executar script; mensagem ou sanitização | Alta | Pendente |
-| CT08 | Validação de tipo (preço numérico) | Validação | Verificar bloqueio de entradas não-numéricas | preço = "banana" | Rejeita e mostra mensagem de validação | Média | Pendente |
-| CT09 | SQL Injection (básico) | Segurança | Verificar tratamento de entradas maliciosas | inserir `' OR '1'='1` em campo de busca/login | Não comprometer consulta; erro controlado | Alta | Pendente |
-| CT10 | Acesso indevido (rota interna) | Segurança / E2E | Verificar proteção de páginas internas sem sessão | navegar diretamente para rota interna | Redireciona para login e não mostra conteúdo | Alta | Pendente |
+## Objetivo
 
-- Cada caso deve ter um teste automatizado quando aplicável.
-- Para testes de validação e segurança, validar tanto front-end quanto back-end quando possível.
-Observações:
-- Cada caso deve ter um teste automatizado quando aplicável.
-- Para testes de validação e segurança, validar tanto front-end quanto back-end quando possível.
+Validar as funcionalidades principais do sistema Acervo Rondoniense, incluindo autenticação, envio de sugestões de patrimônios, controle de acesso administrativo, segurança básica, busca avançada e fluxo de publicação de patrimônios.
 
-Ambiente padrão para execução: Apache na porta 80, URL base `http://localhost/sistema-web`, banco `acervo_rondoniense`.
-- Cada caso deve ter um teste automatizado quando aplicável.
-- Para testes de validação e segurança, validar tanto front-end quanto back-end quando possível.
-# Plano de Testes Automatizados
+---
 
-| ID   | Funcionalidade                            | Objetivo                                                                 | Tipo de Teste         | Dados de Entrada                                                                                      | Resultado Esperado                                                                                  | Prioridade | Status     |
-|------|-------------------------------------------|--------------------------------------------------------------------------|-----------------------|--------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|------------|------------|
-| CT01 | Login                                     | Validar acesso de usuário comum com credenciais válidas                  | Funcional / E2E       | Email: usuario@teste.com, Senha: senha123                                                              | Usuário é autenticado e vê mensagem de sucesso em tela                                               | Alta       | Planejado  |
-| CT02 | Login                                     | Validar bloqueio quando a senha está incorreta                            | Funcional / Segurança | Email: usuario@teste.com, Senha: senhaerrada                                                           | Exibe mensagem de erro e não autentica o usuário                                                      | Alta       | Planejado  |
-| CT03 | Formulário de Sugestão                     | Validar envio com campos obrigatórios vazios                              | Validação de Dados    | Nome: vazio, Cidade: vazio, Descrição: vazio, Foto: vazio                                             | Sistema impede envio, exibe aviso de campos obrigatórios e não chama API                              | Alta       | Planejado  |
-| CT04 | Formulário de Sugestão                     | Validar fluxo completo do usuário sugerindo um patrimônio                 | Fluxo / E2E           | Nome: Forte Histórico, Cidade: Porto Velho, Descrição: Teste, Foto: https://example.com/foto.jpg     | Sugestão enviada com sucesso e mensagem de confirmação aparece                                          | Alta       | Planejado  |
-| CT05 | Acesso restrito ao painel administrativo    | Impedir acesso anônimo à rota /admin/solicitacoes                         | Segurança / Acesso    | Navegar para /admin/solicitacoes sem login                                                             | Redireciona ou exibe mensagem de login obrigatório                                                      | Alta       | Planejado  |
-| CT06 | Acesso restrito ao painel administrativo    | Impedir acesso de usuário comum à rota administrativa                      | Segurança / Acesso    | Login como usuário comum e acessar /admin/solicitacoes                                                | Exibe mensagem de acesso restrito e mantém usuário sem acesso administrativo                            | Alta       | Planejado  |
-| CT07 | Segurança XSS                              | Validar que tags de script não são executadas em sugestão de patrimônio   | Segurança / Injeção   | Nome: <script>alert('xss')</script>, outros campos válidos                                            | Nenhum diálogo de alerta é exibido e entrada é tratada sem execução de script                         | Alta       | Planejado  |
-| CT08 | Integração API de Sugestões                 | Validar que o envio do formulário usa a API `/api/solicitacoes`           | Integração / E2E      | Dados de sugestão completos e usuário autenticado                                                      | Requisição POST é enviada, resposta é `success: true` e a UI confirma o envio                         | Média      | Planejado  |
-| CT09 | Listagem de solicitações no Admin           | Validar que painel administrativo lê dados do banco via API               | Integração / E2E      | Login como administradora, acessar /admin/solicitacoes                                                | Painel carrega solicitações diretamente da API e exibe cards com status                               | Média      | Planejado  |
-| CT10 | Segurança de sessão                         | Validar que o sistema exige login para enviar sugestões                   | Segurança / Fluxo     | Navegar para /login, não autenticar, tentar submeter sugestão                                          | Sistema bloqueia envio e exibe mensagem de login requerida                                            | Alta       | Planejado  |
+# Ambiente de Execução
+
+**Frontend:** Next.js + React + TypeScript
+
+**Banco de Dados:** MariaDB 10.4 (XAMPP)
+
+**Gerenciador do Banco:** phpMyAdmin
+
+**URL da Aplicação:**
+
+http://localhost:3000
+
+**Banco de Dados:**
+
+acervo_rondoniense
+
+**Ferramenta de Teste Automatizado:**
+
+Playwright
+
+---
+
+# Plano de Testes
+
+| ID   | Funcionalidade           | Tipo            | Objetivo                                                 | Dados de Entrada                                        | Resultado Esperado                                                         | Prioridade | Status    |
+| ---- | ------------------------ | --------------- | -------------------------------------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------- | ---------- | --------- |
+| CT01 | Login                    | Funcional / E2E | Validar autenticação com credenciais válidas             | E-mail e senha válidos                                  | Usuário acessa o sistema com sucesso                                       | Alta       | Planejado |
+| CT02 | Login                    | Negativo        | Validar bloqueio de acesso com senha incorreta           | E-mail válido e senha incorreta                         | Sistema exibe mensagem de erro e permanece na tela de login                | Alta       | Planejado |
+| CT03 | Formulário de Sugestão   | Validação       | Verificar obrigatoriedade dos campos da sugestão         | Nome, descrição, cidade e foto vazios                   | Sistema bloqueia envio e informa campos obrigatórios                       | Alta       | Planejado |
+| CT04 | Formulário de Sugestão   | Fluxo / E2E     | Validar envio completo de sugestão de patrimônio         | Dados válidos preenchidos                               | Sugestão enviada com sucesso                                               | Alta       | Planejado |
+| CT05 | Área Administrativa      | Segurança       | Impedir acesso sem autenticação                          | Acessar /admin/solicitacoes sem login                   | Redirecionamento para login ou mensagem de acesso negado                   | Alta       | Planejado |
+| CT06 | Área Administrativa      | Segurança       | Impedir acesso de usuário comum ao painel administrativo | Login com usuário comum e acesso à rota administrativa  | Sistema bloqueia acesso administrativo                                     | Alta       | Planejado |
+| CT07 | Segurança XSS            | Segurança       | Verificar proteção contra execução de scripts maliciosos | Inserção de <script>alert(1)</script> em campo de texto | Script não é executado e conteúdo é tratado com segurança                  | Alta       | Planejado |
+| CT08 | Busca Avançada           | Funcional       | Validar funcionamento dos filtros de busca               | Cidade, categoria ou conservação                        | Sistema retorna apenas patrimônios compatíveis com os filtros selecionados | Média      | Planejado |
+| CT09 | SQL Injection            | Segurança       | Validar proteção contra manipulação de consultas         | ' OR '1'='1 em campo de login ou busca                  | Sistema não permite acesso indevido nem compromete os dados                | Alta       | Planejado |
+| CT10 | Curadoria Administrativa | Fluxo / E2E     | Validar publicação de patrimônio após aprovação          | Administradora aprova solicitação pendente              | Patrimônio passa a aparecer no catálogo público                            | Alta       | Planejado |
+
+---
+
+# Casos de Teste Automatizados (Playwright)
+
+Os seguintes casos serão automatizados utilizando Playwright:
+
+### login.spec.js
+
+* CT01 – Login válido
+* CT02 – Login inválido
+
+### sugestoes.spec.js
+
+* CT03 – Campos obrigatórios vazios
+* CT04 – Envio de sugestão válido
+
+### admin.spec.js
+
+* CT05 – Acesso administrativo sem login
+* CT06 – Usuário comum acessando área administrativa
+* CT10 – Aprovação de patrimônio
+
+### seguranca.spec.js
+
+* CT07 – Teste de XSS
+* CT09 – Teste de SQL Injection
+
+### busca.spec.js
+
+* CT08 – Busca avançada
+
+---
+
+# Requisitos Validados
+
+## Autenticação
+
+* Login com credenciais válidas.
+* Bloqueio de login inválido.
+
+## Sugestões de Patrimônio
+
+* Campos obrigatórios.
+* Envio correto de solicitações.
+
+## Controle de Acesso
+
+* Bloqueio de acesso administrativo sem login.
+* Bloqueio de acesso administrativo para usuários comuns.
+
+## Segurança
+
+* Proteção contra XSS.
+* Proteção contra SQL Injection.
+
+## Busca
+
+* Funcionamento dos filtros da busca avançada.
+
+## Curadoria
+
+* Aprovação administrativa.
+* Publicação automática do patrimônio aprovado.
